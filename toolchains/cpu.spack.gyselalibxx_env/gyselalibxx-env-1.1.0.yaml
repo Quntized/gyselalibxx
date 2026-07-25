@@ -9,11 +9,11 @@ spack:
   - packages:
     - 'cmake@3.30'
     - 'ddc@0.15 +fft +pdi +splines'
-    - 'ginkgo@1.9'
+    - 'ginkgo@1.9 +cuda cuda_arch=86'
     - 'gmgpolar@2.3'
     - 'googletest@1.14 +gmock'
-    - 'kokkos@4.7 +serial'
-    - 'kokkos-kernels@4.7'
+    - 'kokkos@4.7 +serial +cuda +cuda_constexpr +cuda_relocatable_device_code cuda_arch=86'
+    - 'kokkos-kernels@4.7 +cuda cuda_arch=86'
     - 'kokkos-tools@git.3d33d0a783c5321d6981b3b4e43d3c157d2ca887=develop'
     - 'koliop@0.1.2:0.1'
     - 'lapack'
@@ -56,7 +56,7 @@ spack:
   view: true
   packages:
     all:
-      variants: ~fortran ~mpi ~openmp cxxstd=17
+      variants: ~fortran ~mpi ~openmp +cuda cxxstd=20 cuda_arch=86
     blas:
       require: openblas@0.3
     c:
@@ -74,7 +74,7 @@ spack:
     fortran:
       require: 'gcc@11:'
     kokkos-fft:
-      require: 'host_backend=fftw-serial'
+      require: 'host_backend=fftw-serial device_backend=cufft'
     lapack:
       require: openblas@0.3
     mpi:
