@@ -9,19 +9,11 @@ spack:
   - packages:
     - 'cmake@3.31'
     - 'ddc@0.15 +fft +pdi +splines'
-<<<<<<< HEAD:toolchains/cpu.spack.gyselalibxx_env/gyselalibxx-env-1.1.0.yaml
-    - 'ginkgo@1.9 +cuda cuda_arch=86'
-    - 'gmgpolar@2.3'
-    - 'googletest@1.14 +gmock'
-    - 'kokkos@4.7 +serial +cuda +cuda_constexpr +cuda_relocatable_device_code cuda_arch=86'
-    - 'kokkos-kernels@4.7 +cuda cuda_arch=86'
-=======
-    - 'ginkgo@1.11'
+    - 'ginkgo@1.11 +cuda cuda_arch=86'
     - 'gmgpolar@2.3'
     - 'googletest@1.17 +gmock'
-    - 'kokkos@5.1 +serial'
-    - 'kokkos-kernels@5.1'
->>>>>>> upstream/devel:toolchains/cpu.spack.gyselalibxx_env/gyselalibxx-spack-environment.yaml
+    - 'kokkos@5.1 +serial +cuda +cuda_constexpr +cuda_relocatable_device_code cuda_arch=86'
+    - 'kokkos-kernels@5.1 +cuda cuda_arch=86'
     - 'kokkos-tools@git.3d33d0a783c5321d6981b3b4e43d3c157d2ca887=develop'
     - 'koliop@0.2'
     - 'lapack'
