@@ -102,12 +102,10 @@ using DFieldXVx = FieldXVx<double>;
 // Operators
 using SplineInterpolatorX = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesX,
-        GridX,
-        PERIODIC,
-        PERIODIC,
-        SplineXClosure,
-        SplineXClosure>;
+        IdxRange<BSplinesX>,
+        IdxRange<GridX>,
+        ExtrapolationRule::Periodic,
+        SplineBoundaryClosures<SplineXClosure, SplineXClosure>>;
 
 
 class XVxAdvection1DTest : public ::testing::Test

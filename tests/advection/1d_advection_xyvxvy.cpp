@@ -123,21 +123,17 @@ using DFieldXYVxVy = FieldXYVxVy<double>;
 // Operators
 using SplineInterpolatorX = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesX,
-        GridX,
-        PERIODIC,
-        PERIODIC,
-        SplineXClosure,
-        SplineXClosure>;
+        IdxRange<BSplinesX>,
+        IdxRange<GridX>,
+        ExtrapolationRule::Periodic,
+        SplineBoundaryClosures<SplineXClosure, SplineXClosure>>;
 
 using SplineInterpolatorY = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesY,
-        GridY,
-        PERIODIC,
-        PERIODIC,
-        SplineYClosure,
-        SplineYClosure>;
+        IdxRange<BSplinesY>,
+        IdxRange<GridY>,
+        ExtrapolationRule::Periodic,
+        SplineBoundaryClosures<SplineYClosure, SplineYClosure>>;
 
 
 

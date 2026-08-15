@@ -118,21 +118,19 @@ struct LagBasisVx : UniformLagrangeBasis<Vx, 3, double>
 
 using LagrangeInterpolatorVx = LagrangeInterpolator<
         Kokkos::DefaultExecutionSpace,
-        LagBasisVx,
-        GridVx,
-        ExtrapolationRule::CONSTANT,
-        ExtrapolationRule::CONSTANT>;
+        double,
+        IdxRange<LagBasisVx>,
+        IdxRange<GridVx>,
+        ddc::detail::TypeSeq<ExtrapolationRule::Constant, ExtrapolationRule::Constant>>;
 
 
 // Operators
 using SplineInterpolatorVx = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesVx,
-        GridVx,
-        ExtrapolationRule::CONSTANT,
-        ExtrapolationRule::CONSTANT,
-        SplineVxClosure,
-        SplineVxClosure>;
+        IdxRange<BSplinesVx>,
+        IdxRange<GridVx>,
+        ddc::detail::TypeSeq<ExtrapolationRule::Constant, ExtrapolationRule::Constant>,
+        SplineBoundaryClosures<SplineVxClosure, SplineVxClosure>>;
 
 
 class Velocity1DAdvectionTest : public ::testing::Test

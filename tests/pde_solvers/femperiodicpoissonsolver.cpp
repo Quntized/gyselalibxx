@@ -57,12 +57,10 @@ using IdxRangeBatchX = IdxRange<GridBatch, GridX>;
 
 using SplineXInterpolator = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesX,
-        GridX,
-        ExtrapolationRule::PERIODIC,
-        ExtrapolationRule::PERIODIC,
-        ddc::SplineBuilderClosure::PERIODIC,
-        ddc::SplineBuilderClosure::PERIODIC>;
+        IdxRange<BSplinesX>,
+        IdxRangeX,
+        ExtrapolationRule::Periodic,
+        SplineBoundaryClosure::Periodic>;
 
 using DFieldMemX = DFieldMem<IdxRangeX>;
 using DFieldMemBatchX = DFieldMem<IdxRangeBatchX>;

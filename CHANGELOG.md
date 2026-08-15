@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Add an `extrapolation_rule` argument to `GMGPolarPoissonLikeSolver`. Default no extrapolation.
 - Add a new constructor for `GaussLegendre` from an index range describing the cell edges.
 - Add a `GradientCreator` operator to group derivative calculations.
 - Add a `NDLagrangeEvaluator` class.
@@ -37,6 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add a method `get_derivative` to `CentralFDMPartialDerivative` so it respects the `LocalPartialDerivativeCreator` concept.
 - Add class `GMGPolarPoissonLikeSolver` to allow the use of [GMGPolar](https://github.com/SciCompMod/GMGPolar) as a polar Poisson solver.
 - Add GMGPolar in the toolchains.
+- Allow `SplineInterpolator` and `LagrangeInterpolator` to specify custom extrapolation rules.
+- Allow `IdentityInterpolationBuilder` class to take a field on a strided layout.
+- Add a `DiscreteMapping` class to handle ND mappings whose values are only known at the mesh points of a grid.
 
 ### Fixed
 
@@ -53,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix use of `BslAdvectionSpatial` and `BslAdvectionVelocity` with non-double precision.
 - Fix H100 toolchain on Jean-Zay.
 - Fix Lagrange basis non-uniform initialisation for a sub-domain.
+- Fix use of `ExtrapolationRule::Constant` for 2D splines.
 
 ### Changed
 
@@ -87,6 +92,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow passing fields defined on strided domains to `BslAdvection1D`.
 - Allow `run_cppcheck` CI script to be run in parallel.
 - Simplify `restrict_to_idx_range` implementation.
+- Rename CMake options `POLAR_SPLINES_TEST_DEGREE_[MIN/MAX]` to `GYSELALIBXX_POLAR_SPLINES_TEST_DEGREE_[MIN/MAX]`.
+- Changed `ExtrapolationRule::RULENAME` from an enum to `ExtrapolationRule::RuleName`, a struct tag in a namespace.
+- Remove the C compiler dependency.
+- Make the dependency on GoogleTest dependent on the CMake option `GYSELALIBXX_BUILD_TESTING`.
+- Group extrapolation rules by dimension in `SplineInterpolator` and `LagrangeInterpolator`.
+- Group spline boundary closure rules by dimension in `SplineInterpolator`.
+- Change the `LagrangeInterpolator` templates to allow ND cases to be handled.
+- Change the `SplineInterpolator` templates to allow 2D cases to be handled.
+- Setup `GMGPolar` in `GMGPolarPoissonLikeSolver::update_coefficients` instead of `GMGPolarPoissonLikeSolver::operator()`.
+- Use `Interpolator` concept instead of `Builder` and `Evaluator` classes to simplify classes:
+  - `PolarFootFinder`
+  - `DiscretePoloidalCSSplineMappingBuilder`
+  - `RefinedDiscretePoloidalCSSplineMappingBuilder`
+  - `BslPredCorrRTheta`
+  - `BslExplicitPredCorrRTheta`
+  - `BslImplicitPredCorrRTheta`
+  - `PolarSplineFEMPoissonLikeSolver`
+  - `GMGPolarPoissonLikeSolver`
 
 ### Deprecated
 

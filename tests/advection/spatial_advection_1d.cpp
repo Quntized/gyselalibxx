@@ -103,12 +103,10 @@ using FieldXVx = Field<ElementType, IdxRangeXVx>;
 // Operators
 using SplineInterpolatorX = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesX,
-        GridX,
-        PERIODIC,
-        PERIODIC,
-        SplineXClosure,
-        SplineXClosure>;
+        IdxRange<BSplinesX>,
+        IdxRange<GridX>,
+        ExtrapolationRule::Periodic,
+        SplineBoundaryClosures<SplineXClosure, SplineXClosure>>;
 
 
 class Spatial1DAdvectionTest : public ::testing::Test

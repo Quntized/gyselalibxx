@@ -30,8 +30,8 @@ struct BSplinesY
 ddc::SplineBuilderClosure constexpr SplineXClosure = ddc::SplineBuilderClosure::PERIODIC;
 ddc::SplineBuilderClosure constexpr SplineYClosure = ddc::SplineBuilderClosure::PERIODIC;
 
-ExtrapolationRule constexpr SplineXExtrapolation = ExtrapolationRule::PERIODIC;
-ExtrapolationRule constexpr SplineYExtrapolation = ExtrapolationRule::PERIODIC;
+using SplineXExtrapolation = ExtrapolationRule::Periodic;
+using SplineYExtrapolation = ExtrapolationRule::Periodic;
 
 // IDim initialisers
 using SplineInterpPointsX
@@ -43,21 +43,17 @@ using SplineInterpPointsY
 // SplineBuilder and SplineEvaluator definitions
 using SplineXInterpolator = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesX,
-        GridX,
+        IdxRange<BSplinesX>,
+        IdxRange<GridX>,
         SplineXExtrapolation,
-        SplineXExtrapolation,
-        SplineXClosure,
-        SplineXClosure>;
+        SplineBoundaryClosures<SplineXClosure, SplineXClosure>>;
 
 using SplineYInterpolator = SplineInterpolator<
         Kokkos::DefaultExecutionSpace,
-        BSplinesY,
-        GridY,
+        IdxRange<BSplinesY>,
+        IdxRange<GridY>,
         SplineYExtrapolation,
-        SplineYExtrapolation,
-        SplineYClosure,
-        SplineYClosure>;
+        SplineBoundaryClosures<SplineYClosure, SplineYClosure>>;
 
 // Spline index range
 using IdxRangeBSX = IdxRange<BSplinesX>;
