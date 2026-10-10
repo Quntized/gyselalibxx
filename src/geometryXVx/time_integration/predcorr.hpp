@@ -2,8 +2,12 @@
 
 #pragma once
 
+#include "collisions_inter.hpp"
+#include "collisions_intra.hpp"
 #include "geometry_xvx.hpp"
 #include "itimesolver.hpp"
+#include "kinetic_source.hpp"
+#include "krook_source_constant.hpp"
 
 class IQNSolver;
 class IBoltzmannSolver;
@@ -21,8 +25,11 @@ class IBoltzmannSolver;
 class PredCorr : public ITimeSolver
 {
 private:
+    CollisionsIntra const& m_collisions_intra;
+    CollisionsInter const& m_collisions_inter;
     IBoltzmannSolver const& m_boltzmann_solver;
-
+    KrookSourceConstant const& m_krook_constant;
+    KineticSource const& m_kinetic_source;
     IQNSolver const& m_poisson_solver;
 
 public:
@@ -30,8 +37,18 @@ public:
      * @brief Creates an instance of the predictor-corrector class.
      * @param[in] boltzmann_solver A solver for a Boltzmann equation.
      * @param[in] poisson_solver A solver for a Quasi-Neutrality equation.
+     * @param[in] collisions_inter A solver for inter-species collisions.
+     * @param[in] collisions_intra A solver for intra-species collisions.
+     * @param[in] krook_adaptive A solver for the Krook source term.
+     * @param[in] kinetic_source A solver for the kinetic source term.
      */
-    PredCorr(IBoltzmannSolver const& boltzmann_solver, IQNSolver const& poisson_solver);
+    PredCorr(
+            IBoltzmannSolver const& boltzmann_solver,
+            IQNSolver const& poisson_solver,
+            CollisionsInter const& collisions_inter,
+            CollisionsIntra const& collisions_intra,
+            KrookSourceConstant const& krook_adaptive,
+            KineticSource const& kinetic_source);
 
     ~PredCorr() override = default;
 
@@ -45,6 +62,10 @@ public:
      * @param[in] steps The number of iterations to be performed by the predictor-corrector.
      * @return The distribution function after solving the system.
      */
-    DFieldSpXVx operator()(DFieldSpXVx allfdistribu, double time_start, double dt, int steps = 1)
-            const override;
+    DFieldSpXVx operator()(
+            DFieldSpXVx allfdistribu,
+            double time_start,
+            double dt,
+            DConstFieldVx const quadrature_coeffs,
+            int steps = 1) const override;
 };
