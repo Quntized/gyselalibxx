@@ -30,4 +30,8 @@ public:
             DConstFieldVx const quadrature_coeffs,
             int const steps = 1) const
             = 0;
+            DConstFieldVx quadrature_coefficient, 
+            DConstFieldX quadrature_coefficient_E,
+            int steps = 1) const = 0;
+
 };

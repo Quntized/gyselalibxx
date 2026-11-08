@@ -8,12 +8,12 @@ spack:
   definitions:
   - packages:
     - 'cmake@3.31'
-    - 'ddc@0.15 +fft +pdi +splines'
-    - 'ginkgo@1.11 +cuda cuda_arch=86'
-    - 'gmgpolar@2.3'
+    - 'ddc@0.16 +fft +pdi +splines'
+    - 'ginkgo@1.11'
+    - 'gmgpolar@2.4'
     - 'googletest@1.17 +gmock'
-    - 'kokkos@5.1 +serial +cuda +cuda_constexpr +cuda_relocatable_device_code cuda_arch=86'
-    - 'kokkos-kernels@5.1 +cuda cuda_arch=86'
+    - 'kokkos@5.1 +serial'
+    - 'kokkos-kernels@5.1'
     - 'kokkos-tools@git.3d33d0a783c5321d6981b3b4e43d3c157d2ca887=develop'
     - 'koliop@0.2'
     - 'lapack'
@@ -29,6 +29,7 @@ spack:
     - 'python@3.14'
   - python-packages:
     - 'py-dask@2026.3'
+    - 'py-gvec@1.4'
     - 'py-h5py@3.16'
     - 'py-imageio@2.37'
     - 'py-matplotlib@3.11 ^freetype@2.14.1'
@@ -52,7 +53,7 @@ spack:
   view: true
   packages:
     all:
-      variants: ~fortran ~mpi ~openmp +cuda cxxstd=20 cuda_arch=86
+      variants: ~fortran ~mpi ~openmp cxxstd=17
     blas:
       require: openblas@0.3
     c:
@@ -70,7 +71,7 @@ spack:
     fortran:
       require: 'gcc@11:'
     kokkos-fft:
-      require: 'host_backend=fftw-serial device_backend=cufft'
+      require: 'host_backend=fftw-serial'
     lapack:
       require: openblas@0.3
     mpi:
