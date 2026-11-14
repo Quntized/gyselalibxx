@@ -59,7 +59,7 @@ spack --env gyselalibxx-spack-environment mirror add \
   --unsigned \
   --type binary \
   local-buildcache oci://ghcr.io/gyselax/gyselalibxx-spack-$(spack arch --operating-system)-buildcache
-spack --env gyselalibxx-spack-environment install
+spack --env gyselalibxx-spack-environment install -j4
 spack env activate -p gyselalibxx-spack-environment
 PYTHON_EXECUTABLE=$(which python3)
 spack env deactivate
