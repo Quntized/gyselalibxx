@@ -70,7 +70,11 @@ public:
             double const density,
             double const temperature,
             double const mean_velocity);
-
+    static void compute_two_stream(
+            DFieldVx fTwoStream,
+            double density,
+            double temperature,
+            double beam_velocity);
     /**
      * @brief A method for accessing the m_density_eq member variable of the class.
      * @return A view containing the m_density_eq value. 

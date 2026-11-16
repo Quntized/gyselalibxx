@@ -2,53 +2,51 @@
 
 #include <ddc/ddc.hpp>
 
-#include "maxwellianequilibrium.hpp"
+#include "twostreamequilibrium.hpp"
 
-MaxwellianEquilibrium::MaxwellianEquilibrium(
+TwoStreamEquilibrium::TwoStreamEquilibrium(
         host_t<DFieldMemSp> density_eq,
         host_t<DFieldMemSp> temperature_eq,
-        host_t<DFieldMemSp> mean_velocity_eq)
+        host_t<DFieldMemSp> beam_velocity_eq)
     : m_density_eq(std::move(density_eq))
     , m_temperature_eq(std::move(temperature_eq))
-    , m_mean_velocity_eq(std::move(mean_velocity_eq))
+    , m_beam_velocity_eq(std::move(beam_velocity_eq))
 {
 }
 
-DFieldSpVx MaxwellianEquilibrium::operator()(DFieldSpVx const allfequilibrium) const
+DFieldSpVx TwoStreamEquilibrium::operator()(DFieldSpVx const allfequilibrium) const
 {
     IdxRangeVx const gridvx = get_idx_range<GridVx>(allfequilibrium);
     IdxRangeSp const gridsp = get_idx_range<Species>(allfequilibrium);
 
-    // Initialisation of the maxwellian
-    DFieldMemVx maxwellian_alloc("maxwellian (MaxwellianEquilibrium::operator())", gridvx);
-    DFieldVx maxwellian = get_field(maxwellian_alloc);
+    // Initialisation of the two-stream profile, one species at a time
+    DFieldMemVx profile_alloc("two stream (TwoStreamEquilibrium::operator())", gridvx);
+    DFieldVx profile = get_field(profile_alloc);
     ddc::host_for_each(gridsp, [&](IdxSp const isp) {
-        compute_maxwellian(
-                maxwellian,
+        compute_two_stream(
+                profile,
                 m_density_eq(isp),
                 m_temperature_eq(isp),
-                m_mean_velocity_eq(isp));
+                m_beam_velocity_eq(isp));
 
         const std::source_location location = std::source_location::current();
         ddc::parallel_for_each(
                 location.function_name(),
                 Kokkos::DefaultExecutionSpace(),
                 gridvx,
-                KOKKOS_LAMBDA(IdxVx const ivx) { allfequilibrium(isp, ivx) = maxwellian(ivx); });
+                KOKKOS_LAMBDA(IdxVx const ivx) { allfequilibrium(isp, ivx) = profile(ivx); });
     });
     return allfequilibrium;
 }
 
-
-
-void MaxwellianEquilibrium::compute_maxwellian(
-        DFieldVx const fMaxwellian,
+void TwoStreamEquilibrium::compute_two_stream(
+        DFieldVx const fTwoStream,
         double const density,
         double const temperature,
-        double const mean_velocity)
+        double const beam_velocity)
 {
     double const inv_sqrt_2piT = 1. / Kokkos::sqrt(2. * M_PI * temperature);
-    IdxRangeVx const gridvx = get_idx_range(fMaxwellian);
+    IdxRangeVx const gridvx = get_idx_range(fTwoStream);
     const std::source_location location = std::source_location::current();
     ddc::parallel_for_each(
             location.function_name(),
@@ -56,31 +54,35 @@ void MaxwellianEquilibrium::compute_maxwellian(
             gridvx,
             KOKKOS_LAMBDA(IdxVx const ivx) {
                 CoordVx const vx = ddc::coordinate(ivx);
-                fMaxwellian(ivx) = density * inv_sqrt_2piT
-                                   * Kokkos::exp(
-                                           -(vx - mean_velocity) * (vx - mean_velocity)
-                                           / (2. * temperature));
+                double const beam_plus
+                        = Kokkos::exp(-(vx - beam_velocity) * (vx - beam_velocity)
+                                      / (2. * temperature));
+                double const beam_minus
+                        = Kokkos::exp(-(vx + beam_velocity) * (vx + beam_velocity)
+                                      / (2. * temperature));
+                fTwoStream(ivx) = 0.5 * density * inv_sqrt_2piT * (beam_plus + beam_minus);
             });
 }
 
-MaxwellianEquilibrium maxwellian_equilibrium::init_from_input(
+TwoStreamEquilibrium twostream_equilibrium::init_from_input(
         IdxRangeSp idx_range_kinsp,
         PC_tree_t const& yaml_input_file)
 {
     host_t<DFieldMemSp> density_eq(idx_range_kinsp);
     host_t<DFieldMemSp> temperature_eq(idx_range_kinsp);
-    host_t<DFieldMemSp> mean_velocity_eq(idx_range_kinsp);
+    host_t<DFieldMemSp> beam_velocity_eq(idx_range_kinsp);
 
     for (IdxSp const isp : idx_range_kinsp) {
         PC_tree_t const conf_isp = PCpp_get(yaml_input_file, ".SpeciesInfo[%d]", isp.uid());
 
         density_eq(isp) = PCpp_double(conf_isp, ".density_eq");
         temperature_eq(isp) = PCpp_double(conf_isp, ".temperature_eq");
-        mean_velocity_eq(isp) = PCpp_double(conf_isp, ".mean_velocity_eq");
+        // the beam speed is read from the same key as the Maxwellian's mean velocity
+        beam_velocity_eq(isp) = PCpp_double(conf_isp, ".mean_velocity_eq");
     }
 
-    return MaxwellianEquilibrium(
+    return TwoStreamEquilibrium(
             std::move(density_eq),
             std::move(temperature_eq),
-            std::move(mean_velocity_eq));
+            std::move(beam_velocity_eq));
 }

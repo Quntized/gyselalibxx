@@ -4,6 +4,7 @@
 
 #include "geometry_xvx.hpp"
 
+
 /**
  * @brief An abstract class for solving a Boltzmann-Poisson system of equations.
  */
@@ -26,5 +27,8 @@ public:
             DFieldSpXVx allfdistribu,
             double time_start,
             double dt,
+            DConstFieldVx quadrature_coefficient, 
+            DConstFieldX quadrature_coefficient_E,
             int steps = 1) const = 0;
+
 };

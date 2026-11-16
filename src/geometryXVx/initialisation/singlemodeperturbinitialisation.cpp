@@ -91,6 +91,6 @@ void SingleModePerturbInitialisation::perturbation_initialisation(
             gridx,
             KOKKOS_LAMBDA(IdxX const ix) {
                 CoordX const x = ddc::coordinate(ix);
-                perturbation(ix) = perturb_amplitude * Kokkos::cos(kx * x);
+                perturbation(ix) = perturb_amplitude*Kokkos::exp(kx * (x - Lx));
             });
 }
